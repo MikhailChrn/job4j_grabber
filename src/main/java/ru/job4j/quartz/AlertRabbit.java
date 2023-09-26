@@ -19,7 +19,6 @@ public class AlertRabbit {
         readIntervalSeconds();
     }
 
-
     private void readIntervalSeconds() {
         Properties config = new Properties();
         try (InputStream is = AlertRabbit.class.getClassLoader()
@@ -31,29 +30,29 @@ public class AlertRabbit {
         }
     }
 
-        public static void main(String[] args) {
-        AlertRabbit alertRabbit = new AlertRabbit();
-            try {
-                Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-                scheduler.start();
-                JobDetail job = newJob(Rabbit.class).build();
-                SimpleScheduleBuilder times = simpleSchedule()
-                        .withIntervalInSeconds(alertRabbit.intervalSeconds)
-                        .repeatForever();
-                Trigger trigger = newTrigger()
-                        .startNow()
-                        .withSchedule(times)
-                        .build();
-                scheduler.scheduleJob(job, trigger);
-            } catch (SchedulerException se) {
-                se.printStackTrace();
-            }
-        }
-
     public static class Rabbit implements Job {
         @Override
         public void execute(JobExecutionContext context) {
             System.out.println("Rabbit runs here ...");
+        }
+    }
+
+    public static void main(String[] args) {
+        AlertRabbit alertRabbit = new AlertRabbit();
+        try {
+            Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+            scheduler.start();
+            JobDetail job = newJob(Rabbit.class).build();
+            SimpleScheduleBuilder times = simpleSchedule()
+                    .withIntervalInSeconds(alertRabbit.intervalSeconds)
+                    .repeatForever();
+            Trigger trigger = newTrigger()
+                    .startNow()
+                    .withSchedule(times)
+                    .build();
+            scheduler.scheduleJob(job, trigger);
+        } catch (SchedulerException se) {
+            se.printStackTrace();
         }
     }
 }
