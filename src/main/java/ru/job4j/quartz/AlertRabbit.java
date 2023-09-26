@@ -12,11 +12,13 @@ import static org.quartz.TriggerBuilder.*;
 import static org.quartz.SimpleScheduleBuilder.*;
 
 public class AlertRabbit {
+
+    private int intervalSeconds;
+
     public AlertRabbit() {
         readIntervalSeconds();
     }
 
-    private int intervalSeconds;
 
     private void readIntervalSeconds() {
         Properties config = new Properties();
