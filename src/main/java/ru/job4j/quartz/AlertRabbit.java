@@ -47,9 +47,7 @@ public class AlertRabbit {
     }
 
     public static class Rabbit implements Job {
-        public Rabbit() {
-
-        }
+        public Rabbit() { }
 
         @Override
         public void execute(JobExecutionContext context) {
@@ -76,7 +74,10 @@ public class AlertRabbit {
                     .usingJobData(data)
                     .build();
             SimpleScheduleBuilder times = simpleSchedule()
-                    .withIntervalInSeconds(5)
+                    .withIntervalInSeconds(
+                            Integer.parseInt(
+                                    alertRabbit.config
+                                            .getProperty("rabbit.interval")))
                     .repeatForever();
             Trigger trigger = newTrigger()
                     .startNow()
