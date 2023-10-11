@@ -1,4 +1,4 @@
-package ru.job4j.model;
+package ru.job4j.grabber;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -21,8 +21,36 @@ public class Post {
         this.created = created;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
     }
 
     @Override
