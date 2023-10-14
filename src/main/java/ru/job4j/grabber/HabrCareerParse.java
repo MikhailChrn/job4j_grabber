@@ -31,6 +31,11 @@ public class HabrCareerParse implements Parse {
                 .text();
     }
 
+    private Post getPost(String vacancyName, String sourceLink, String dateTime) throws IOException {
+        return new Post(vacancyName, sourceLink, retrieveDescription(sourceLink),
+                dateTimeParser.parse(dateTime));
+    }
+
     @Override
     public List<Post> list(String link) throws IOException {
         List<Post> result = new ArrayList<>();
@@ -46,8 +51,7 @@ public class HabrCareerParse implements Parse {
                 Element dateElement = row.select(".vacancy-card__date").first();
                 String dateTime = dateElement.child(0).attr("datetime");
                 try {
-                    result.add(new Post(vacancyName, sourceLink, retrieveDescription(sourceLink),
-                            dateTimeParser.parse(dateTime)));
+                    result.add(getPost(vacancyName, sourceLink, dateTime));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
