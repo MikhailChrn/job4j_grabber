@@ -25,33 +25,39 @@ public class HabrCareerParse implements Parse {
         this.dateTimeParser = dateTimeParser;
     }
 
-    private String retrieveDescription(String link)  throws IOException {
-        return Jsoup.connect(link).get()
+    private String retrieveDescription(String descrLink) throws IOException {
+        return Jsoup.connect(descrLink).get()
                 .select(".vacancy-description__text").get(0)
                 .text();
     }
 
-    private Post getPost(String vacancyName, String sourceLink, String dateTime) throws IOException {
-        return new Post(vacancyName, sourceLink, retrieveDescription(sourceLink),
-                dateTimeParser.parse(dateTime));
+    private Post getPostFromHabrElement(Element row) throws IOException {
+        Post post = null;
+        Element titleElement = row.select(".vacancy-card__title").first();
+        Element linkElement = titleElement.child(0);
+        String vacancyName = titleElement.text();
+        String sourceLink = String.format("%s%s", SOURCE_LINK, linkElement.attr("href"));
+        Element dateElement = row.select(".vacancy-card__date").first();
+        String dateTime = dateElement.child(0).attr("datetime");
+        try {
+            post = new Post(vacancyName, sourceLink,
+                    retrieveDescription(sourceLink), dateTimeParser.parse(dateTime));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return post;
     }
 
     @Override
-    public List<Post> list(String link) throws IOException {
+    public List<Post> list(String pageLink) throws IOException {
         List<Post> result = new ArrayList<>();
         for (int i = 1; i <= NUMBER_OF_PAGES_TO_BE_PARSED; i++) {
-            Connection connection = Jsoup.connect(String.format("%s%s%d", link, "?page=", i));
+            Connection connection = Jsoup.connect(String.format("%s%s%d", pageLink, "?page=", i));
             Document document = connection.get();
             Elements rows = document.select(".vacancy-card__inner");
             rows.forEach(row -> {
-                Element titleElement = row.select(".vacancy-card__title").first();
-                Element linkElement = titleElement.child(0);
-                String vacancyName = titleElement.text();
-                String sourceLink = String.format("%s%s", SOURCE_LINK, linkElement.attr("href"));
-                Element dateElement = row.select(".vacancy-card__date").first();
-                String dateTime = dateElement.child(0).attr("datetime");
                 try {
-                    result.add(getPost(vacancyName, sourceLink, dateTime));
+                    result.add(getPostFromHabrElement(row));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
