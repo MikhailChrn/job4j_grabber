@@ -17,7 +17,7 @@ public class HabrCareerParse implements Parse {
 
     private static final String PAGE_LINK = String.format("%s/vacancies/java_developer", SOURCE_LINK);
 
-    private static final int NUMBER_OF_PAGES_TO_BE_PARSED = 5;
+    private static final int NUMBER_OF_PAGES_TO_BE_PARSED = 1;
 
     private final DateTimeParser dateTimeParser;
 
@@ -64,6 +64,10 @@ public class HabrCareerParse implements Parse {
             });
         }
         return result;
+    }
+
+    public List<Post> getListExternalUse() throws IOException {
+        return this.list(PAGE_LINK);
     }
 
     public static void main(String[] args) throws IOException {
